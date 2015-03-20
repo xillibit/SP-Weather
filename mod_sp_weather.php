@@ -9,7 +9,7 @@
     -------------------------------------------------------------------------*/
     // http://developer.yahoo.com/weather/
     // no direct access
-    defined('_JEXEC') or die('Restricted access');    
+    defined('_JEXEC') or die('Restricted access');
     $layout                 = $params->get('layout', 'default');
     $moduleName             = basename(dirname(__FILE__));
     $moduleID               = $module->id;
@@ -20,6 +20,9 @@
     $helper 				= new modSPWeatherHelper($params,$moduleID);
     $data                   = $helper->getData();
     $data['forecast']       = $helper->getForecastData();
+
+	$snow_report_lasambuy = $helper->getSnowReportLaSambuy();
+	$snow_report_montmin = $helper->getSnowReportMontmin();
 
     if(  is_array( $helper->error() )  )
     {

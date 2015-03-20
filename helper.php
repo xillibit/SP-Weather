@@ -528,17 +528,19 @@
          *
          * @return int
          */
-        static protected function getToken()
+        static public function getToken($user_adressmail, $password)
         {
-        	$user_adressmail = $this->params->get('email_skiinfo');
-        	$password = $this->params->get('password_skiinfo');
-
         	if ( !empty($user_adressmail) && !empty($password) )
         	{
-	        	$url = "http://clientservice.onthesnow.com/externalservice/authorization/token/" . $user_adressmail . "/" . $password;
+	        	$options = new JRegistry;
+				$transport = new JHttpTransportStream($options);
 
-	        	$authorization = SitraCurlFopenHelper::getCURLData($url);
-	        	$auth = json_decode($authorization);
+				// Create a 'stream' transport.
+				$http = new JHttp($options, $transport);
+
+				$authorization = $http->get('http://clientservice.onthesnow.com/externalservice/authorization/token/' . $user_adressmail . '/' . $password);
+
+	        	$auth = json_decode($authorization->body);
 
 	        	if ( !empty($auth) )
 	        	{
@@ -558,10 +560,13 @@
          */
         public function getTokenFromCache()
         {
+        	$user_adressmail = $this->params->get('email_skiinfo');
+        	$password = $this->params->get('password_skiinfo');
+
         	$cache = JFactory::getCache('Mod_sp_weather_snow_forecast');
         	$cache->setCaching(true); // force caching on
         	$cache->setLifeTime(3600); // cache result for 1 hour, optional
-        	$token = $cache->get(array('modSPWeatherHelper', 'getToken'));
+        	$token = $cache->get(array('modSPWeatherHelper', 'getToken'), array($user_adressmail, $password));
 
         	return $token;
         }
@@ -573,9 +578,6 @@
          */
         public function getSnowReportMontmin()
         {
-        	// TODO: replace JHTTP joomla class
-        	include_once(JPATH_ROOT.'/plugins/content/sitraintegration/helpers/sitra.curl.fopen.php');
-
         	// Need to pass the language in use on the site to get data in correct language
         	$language = JFactory::getLanguage();
         	$locale = $language->getLocale();
@@ -591,11 +593,16 @@
 	        		$country = 'gb';
 	        	}
 
-	        	// On récupére les bulletins d'enneigements de Montmin
-	        	$url_montmin = "http://clientservice.onthesnow.com/externalservice/resort/3034/combinedreport?token=" . $token . "&language=" . $lang . "&country=" . $country;
-	        	$data_montmin = SitraCurlFopenHelper::getCURLData($url_montmin);
+	        	$options = new JRegistry;
+	        	$transport = new JHttpTransportStream($options);
 
-	        	$montmin_object = json_decode($data_montmin);
+	        	// Create a 'stream' transport.
+	        	$http = new JHttp($options, $transport);
+
+	        	// TODO: store data in cache
+	        	$data_montmin = $http->get('http://clientservice.onthesnow.com/externalservice/resort/3034/combinedreport?token=' . $token . '&language=' . $lang . '&country=' . $country);
+
+	        	$montmin_object = json_decode($data_montmin->body);
 
 	        	return $montmin_object;
         	}
@@ -608,9 +615,6 @@
          */
         public function getSnowReportLaSambuy()
         {
-        	// TODO: replace JHTTP joomla class
-        	include_once(JPATH_ROOT.'/plugins/content/sitraintegration/helpers/sitra.curl.fopen.php');
-
         	// Need to pass the language in use on the site to get data in correct language
         	$language = JFactory::getLanguage();
         	$locale = $language->getLocale();
@@ -626,11 +630,16 @@
 	        		$country = 'gb';
 	        	}
 
-	        	// On récupére les bulletins d'enneigements de la Sambuy
-	        	$url_lasambuy = "http://clientservice.onthesnow.com/externalservice/resort/3051/combinedreport?token=" . $token . "&language=" . $lang . "&country=" . $country;
-	        	$data_lasambuy = SitraCurlFopenHelper::getCURLData($url_lasambuy);
+	        	$options = new JRegistry;
+	        	$transport = new JHttpTransportStream($options);
 
-	        	$lasambuy_object = json_decode($data_lasambuy);
+	        	// Create a 'stream' transport.
+	        	$http = new JHttp($options, $transport);
+
+	        	// TODO: store data in cache
+	        	$data_lasambuy = $http->get('http://clientservice.onthesnow.com/externalservice/resort/3051/combinedreport?token=' . $token . '&language=' . $lang . '&country=' . $country);
+
+	        	$lasambuy_object = json_decode($data_lasambuy->body);
 
 	        	return $lasambuy_object;
         	}
