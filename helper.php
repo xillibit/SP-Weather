@@ -21,6 +21,7 @@
         private $moduleID;
         private $moduledir;
         private $nightIDs = array(27,29,31,33);
+        // TODO: store images locally instead of call images from yahoo server
         private $iconURL = 'http://l.yimg.com/os/mit/media/m/weather/images/icons/l/%d%s-100567.png';
 
 
@@ -507,10 +508,12 @@
         {
         	$date_today = JFactory::getDate('now')->toUnix();
 
-        	$date_debut_saison = mktime(0, 0, 0, 10, 1, date('Y')); // Correspond au 01/11/20xx
-        	$date_fin_saison = mktime(0, 0, 0, 3, 30, date('Y')); // Correspond au 31/03/20xx
+        	// Give the following date: 01/11/20xx
+        	$start_winter_season = mktime(0, 0, 0, 10, 1, date('Y'));
+        	// Give the following date: 31/03/20xx
+        	$end_winter_season = mktime(0, 0, 0, 3, 30, date('Y'));
 
-        	if ( $date_today > $date_debut_saison || $date_today < $date_fin_saison  )
+        	if ($date_today > $start_winter_season || $date_today < $end_winter_season)
         	{
         		return true;
         	}
@@ -525,22 +528,42 @@
          *
          * @return int
          */
-        public function getToken()
+        static protected function getToken()
         {
-        	// TODO: the token can be stored in cache because it doesn't change
-        	$url = "http://clientservice.onthesnow.com/externalservice/authorization/token/" . $user_adressmail . "/" . $password;
+        	$user_adressmail = $this->params->get('email_skiinfo');
+        	$password = $this->params->get('password_skiinfo');
 
-        	$authorization = SitraCurlFopenHelper::getCURLData($url);
-        	$auth = json_decode($authorization);
+        	if ( !empty($user_adressmail) && !empty($password) )
+        	{
+	        	$url = "http://clientservice.onthesnow.com/externalservice/authorization/token/" . $user_adressmail . "/" . $password;
 
-        	if ( !empty($auth) )
-        	{
-        		return $auth->token;
+	        	$authorization = SitraCurlFopenHelper::getCURLData($url);
+	        	$auth = json_decode($authorization);
+
+	        	if ( !empty($auth) )
+	        	{
+	        		return $auth->token;
+	        	}
+	        	else
+	        	{
+	        		$auth = new stdClass();
+	        	}
         	}
-        	else
-        	{
-        		$auth = new stdClass();
-        	}
+        }
+
+        /**
+         * Get token access from cache
+         *
+         * @return int
+         */
+        public function getTokenFromCache()
+        {
+        	$cache = JFactory::getCache('Mod_sp_weather_snow_forecast');
+        	$cache->setCaching(true); // force caching on
+        	$cache->setLifeTime(3600); // cache result for 1 hour, optional
+        	$token = $cache->get(array('modSPWeatherHelper', 'getToken'));
+
+        	return $token;
         }
 
         /**
@@ -557,7 +580,7 @@
         	$language = JFactory::getLanguage();
         	$locale = $language->getLocale();
 
-        	$token = $this->getToken();
+        	$token = $this->getTokenFromCache();
 
         	if ( !empty($token) )
         	{
@@ -592,7 +615,7 @@
         	$language = JFactory::getLanguage();
         	$locale = $language->getLocale();
 
-        	$token = $this->getToken();
+        	$token = $this->getTokenFromCache();
 
         	if ( !empty($token) )
         	{
