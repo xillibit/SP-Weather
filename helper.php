@@ -21,9 +21,6 @@
         private $moduleID;
         private $moduledir;
         private $nightIDs = array(27,29,31,33);
-        // TODO: store images locally instead of call images from yahoo server
-        private $iconURL = 'http://l.yimg.com/os/mit/media/m/weather/images/icons/l/%d%s-100567.png';
-
 
         /**
         * Init Class Params
@@ -410,8 +407,8 @@
         public function icon($condition)
         {
             $condition = (int) $condition;
-            $at = in_array($condition, $this->nightIDs, true)?'n':'d';
-            $icon =  sprintf($this->iconURL,$condition,$at);
+            $at = in_array($condition, $this->nightIDs, true)?'night':'day';
+            $icon =  sprintf(JURI::root() . 'media/mod_sp_weather/%s/%d%s-100567.png',$at,$condition,$at);
             return  $icon;
         }
 

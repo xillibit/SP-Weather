@@ -23,6 +23,12 @@
 		<filename>helper.php</filename>
 		<filename>index.html</filename>
 	</files>
+	
+	<media folder="media" destination="mod_sp_weather">
+		<folder>day</folder>
+		<folder>night</folder>
+	</media>
+	
 	<config>
 		<fields name="params">
 			<fieldset name="basic">
