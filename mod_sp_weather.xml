@@ -12,6 +12,7 @@
 
 	<languages>
 		<language tag="en-GB">language/en-GB.mod_sp_weather.ini</language>
+		<language tag="fr-FR">language/fr-FR.mod_sp_weather.ini</language>
 	</languages>
 		
 	<files>
@@ -61,7 +62,9 @@
 				<field name="tempUnit" type="list" default="c" label="UNIT" description="UNIT_DESC">
 					<option value="c">CELSIUS</option>
 					<option value="f">FAHRENHEIT</option>
-				</field>		
+				</field>	
+				<field name="email_skiinfo" type="text" default="" label="SP_WEATHER_ADMIN_EMAIL_ADRESS_SKIINFO" description="SP_WEATHER_ADMIN_EMAIL_ADRESS_SKIINFO_DESC" />
+				<field name="password_skiinfo" type="text" default="" label="SP_WEATHER_ADMIN_PASSWORD_SKIINFO" description="SP_WEATHER_ADMIN_PASSWORD_SKIINFO_DESC" />
 			</fieldset>	
 			
 			<fieldset name="advanced">

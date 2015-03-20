@@ -12,7 +12,7 @@
     defined('_JEXEC') or die('Restricted access');
 
     class modSPWeatherHelper
-    {    
+    {
         private $data = array();
         private $forecast = array();
         private $woeid;
@@ -26,7 +26,7 @@
 
         /**
         * Init Class Params
-        * 
+        *
         * @param object $params
         * @param int $id
         */
@@ -45,14 +45,14 @@
 
         /**
         * Error Container array
-        * 
+        *
         * @var array
         */
         private $errors = array();
 
         /**
         * Get Errors, If index is null errors stored as numeric array.
-        * 
+        *
         * @param int | string $index    default is NULL
         * @return mixed
         */
@@ -60,22 +60,22 @@
         {
             if( !empty($this->errors) )
             {
-                if( is_null($index) ) return  $this->errors; 
+                if( is_null($index) ) return  $this->errors;
                 else
                 {
                     if( is_null($this->errors[$index]) ) return false;
-                    else return  $this->errors[$index]; 
-                } 
-            } 
+                    else return  $this->errors[$index];
+                }
+            }
             else return false;
         }
 
 
         /**
         * Set errors in error variable. If index is null errors stored as numeric array.
-        * 
+        *
         * @param mixed $msg
-        * @param mixed $index     default is null. 
+        * @param mixed $index     default is null.
         */
         public function setError($msg, $index=null)
         {
@@ -86,7 +86,7 @@
 
         /**
         * PHP CURL function
-        * 
+        *
         * @param string $url
         * @param array $query   default is array
         * @return string
@@ -117,7 +117,7 @@
                 // execute curl
                 $data = curl_exec($curl);
                 // closing connection
-                $error = trim(curl_error($curl)); 
+                $error = trim(curl_error($curl));
                 curl_close($curl);
                 if( !empty($error) ) $this->setError('"'.$error.'" in module "'.$this->moduledir.'"');
                 return $data;
@@ -134,7 +134,7 @@
         * @version  1.3
         * @param string $file
         * @param string | array $datafn                  e.g:  functionname |  array( object, function) ,
-        * @param array  $datafnarg    default is array  e.g:   array( arg1, arg2, ...) ,       
+        * @param array  $datafnarg    default is array  e.g:   array( arg1, arg2, ...) ,
         * @param mixed $time         default is 900  = 15 min
         * @param mixed $onerror      string function or array(object, method )
         * @return string
@@ -148,7 +148,7 @@
                 if (!JFolder::exists(JPATH_CACHE.'/'.$this->moduledir))
                 {
 
-                    JFolder::create(JPATH_CACHE.'/'.$this->moduledir.'/'); 
+                    JFolder::create(JPATH_CACHE.'/'.$this->moduledir.'/');
                 }
 
                 $cache_file = JPATH_CACHE.'/'.$this->moduledir.'/'.$this->moduleID.'-'.$file;
@@ -159,7 +159,7 @@
 
                     $data =  call_user_func_array($datafn, $datafnarg);
                     JFile::write($cache_file, $data);
-                }  
+                }
                 // if cache file expires, then write cache
                 elseif ( filesize($cache_file) == 0 || ((filemtime($cache_file) + (int) $time ) < time()) )
                 {
@@ -184,9 +184,9 @@
 
             if( isset($data['code']) and $data['code']==500 )
             {
-                JFile::Delete($params['file']); 
+                JFile::Delete($params['file']);
                 $this->setError('Cannot retrive data in module  "'. $this->moduledir.'".');
-            } 
+            }
 
         }
 
@@ -196,9 +196,9 @@
             $data = json_decode($params['data'],true);
             if( empty($data['query']['results']['item']['forecast']) )
             {
-                JFile::Delete($params['file']); 
+                JFile::Delete($params['file']);
                 $this->setError('Cannot retrive forecast data in module  "'. $this->moduledir.'".');
-            } 
+            }
 
         }
 
@@ -207,8 +207,8 @@
         {
             $data = json_decode($params['data'],true);
             if( is_null( $data['query']['results'] ) ){
-                JFile::Delete($params['file']); 
-                $this->setError( 'Cannot get "'.$this->params->get('location').'" woeid in module "'. $this->moduledir.'".' ); 
+                JFile::Delete($params['file']);
+                $this->setError( 'Cannot get "'.$this->params->get('location').'" woeid in module "'. $this->moduledir.'".' );
             }
         }
 
@@ -216,7 +216,7 @@
         {
             $data = json_decode($params['data'],true);
             if( is_null( $data['query']['results'] ) ){
-                JFile::Delete($params['file']); 
+                JFile::Delete($params['file']);
                 $this->setError( 'Cannot get "'.$this->params->get('location').'" location id in module "'. $this->moduledir.'".' );
             }
 
@@ -237,7 +237,7 @@
 
         /**
         * Get Location woe ID
-        * 
+        *
         */
         private function getWoeId()
         {
@@ -265,8 +265,8 @@
 
 
         /**
-        * Get place Location 
-        * 
+        * Get place Location
+        *
         */
         private function getLocation()
         {
@@ -291,7 +291,7 @@
 
         /**
         * Get Weather data
-        * 
+        *
         */
         private function _getWeatherData()
         {
@@ -318,7 +318,7 @@
 
         /**
         * Get Weather data
-        * 
+        *
         */
         private function _getForecastData()
         {
@@ -351,7 +351,7 @@
 
         /**
         * Convert numeric number to language
-        * 
+        *
         * @param int | string $number
         * @return language formatted text
         */
@@ -362,7 +362,7 @@
             foreach($number as $no)
             {
                 if (ctype_digit($no)) {
-                    $formated.=JText::_($prefix . $no);    
+                    $formated.=JText::_($prefix . $no);
                 } else $formated.=$no;
 
 
@@ -373,7 +373,7 @@
 
         /**
         * Weather condition text converter
-        * 
+        *
         * @param string $text
         * @return string
         */
@@ -387,22 +387,22 @@
 
         /**
         * Convert temparature
-        * 
+        *
         * @param mixed $value
         * @param mixed $unit
         * @param mixed $tempType
         */
 
         public function convertUnit($value, $unit)
-        {    
+        {
             $txt  = $this->Numeric2Lang($value);
             $txt .= ( strtolower($unit)=='c') ? JText::_('SP_WEATHER_'. 'C') : JText::_('SP_WEATHER_'. 'F');
             return $txt;
-        }    
+        }
 
         /**
         * weather condition to icon file name
-        * 
+        *
         * @param mixed $icon
         * @param mixed $path
         */
@@ -412,11 +412,11 @@
             $at = in_array($condition, $this->nightIDs, true)?'n':'d';
             $icon =  sprintf($this->iconURL,$condition,$at);
             return  $icon;
-        } 
+        }
 
         /**
         * weather condition to icon font
-        * 
+        *
         * @param mixed $icon
         * @param mixed $path
         */
@@ -429,27 +429,27 @@
                 "1"     => 'storm',
                 "2"     => 'storm',
                 "3"     => 'chance-of-storm',
-                "4"     => 'thunderstorm',          
+                "4"     => 'thunderstorm',
                 "5"     => 'rain-and-snow',
                 "6"     => 'sleet',
-                "7"     => 'sleet',     
-                "8"     => 'rain',    
-                "9"     => 'rain',     
+                "7"     => 'sleet',
+                "8"     => 'rain',
+                "9"     => 'rain',
                 "10"    => 'rain',
                 "11"    => 'rain',
                 "12"    => 'rain',
-                "13"    => 'chance-of-snow',                               
+                "13"    => 'chance-of-snow',
                 "14"    => 'snow',
                 "15"    => 'snow',
                 "16"    => 'snow',
-                "17"    => 'chance-of-storm',  
+                "17"    => 'chance-of-storm',
                 "18"    => 'rain',
                 "19"    => 'dusty',
                 "20"    => 'foggy',
                 "21"    => 'hazy',
                 "22"    => 'smoke',
                 "23"    => 'cloudy',
-                "24"    => 'cloudy',      
+                "24"    => 'cloudy',
                 "25"    => 'snow',
                 "26"    => 'cloudy',
                 "27"    => 'mostly-cloudy',
@@ -496,5 +496,120 @@
         public function getForecastData()
         {
             return $this->forecast;
+        }
+
+        /**
+         * Check if we are in winter to allow to display snow forecast
+         *
+         * @return boolean
+         */
+        public function canDisplaySnowReport()
+        {
+        	$date_today = JFactory::getDate('now')->toUnix();
+
+        	$date_debut_saison = mktime(0, 0, 0, 10, 1, date('Y')); // Correspond au 01/11/20xx
+        	$date_fin_saison = mktime(0, 0, 0, 3, 30, date('Y')); // Correspond au 31/03/20xx
+
+        	if ( $date_today > $date_debut_saison || $date_today < $date_fin_saison  )
+        	{
+        		return true;
+        	}
+        	else
+        	{
+        		return false;
+        	}
+        }
+
+        /**
+         * Get access token from skiinfo webservice in order to retrieve snow forecast
+         *
+         * @return int
+         */
+        public function getToken()
+        {
+        	// TODO: the token can be stored in cache because it doesn't change
+        	$url = "http://clientservice.onthesnow.com/externalservice/authorization/token/" . $user_adressmail . "/" . $password;
+
+        	$authorization = SitraCurlFopenHelper::getCURLData($url);
+        	$auth = json_decode($authorization);
+
+        	if ( !empty($auth) )
+        	{
+        		return $auth->token;
+        	}
+        	else
+        	{
+        		$auth = new stdClass();
+        	}
+        }
+
+        /**
+         * Get snow report from OnTheSnow / Mountain news for Montmin
+         *
+         * @return string
+         */
+        public function getSnowReportMontmin()
+        {
+        	// TODO: replace JHTTP joomla class
+        	include_once(JPATH_ROOT.'/plugins/content/sitraintegration/helpers/sitra.curl.fopen.php');
+
+        	// Need to pass the language in use on the site to get data in correct language
+        	$language = JFactory::getLanguage();
+        	$locale = $language->getLocale();
+
+        	$token = $this->getToken();
+
+        	if ( !empty($token) )
+        	{
+	        	$lang = $locale['5'];
+	        	$country = $locale['5'];
+	        	if ( $locale['5']=='english' ){
+	        		$lang = 'en';
+	        		$country = 'gb';
+	        	}
+
+	        	// On récupére les bulletins d'enneigements de Montmin
+	        	$url_montmin = "http://clientservice.onthesnow.com/externalservice/resort/3034/combinedreport?token=" . $token . "&language=" . $lang . "&country=" . $country;
+	        	$data_montmin = SitraCurlFopenHelper::getCURLData($url_montmin);
+
+	        	$montmin_object = json_decode($data_montmin);
+
+	        	return $montmin_object;
+        	}
+        }
+
+        /**
+         * Get snow report from OnTheSnow / Mountain news for La Sambuy
+         *
+         * @return string
+         */
+        public function getSnowReportLaSambuy()
+        {
+        	// TODO: replace JHTTP joomla class
+        	include_once(JPATH_ROOT.'/plugins/content/sitraintegration/helpers/sitra.curl.fopen.php');
+
+        	// Need to pass the language in use on the site to get data in correct language
+        	$language = JFactory::getLanguage();
+        	$locale = $language->getLocale();
+
+        	$token = $this->getToken();
+
+        	if ( !empty($token) )
+        	{
+	        	$lang = $locale['5'];
+	        	$country = $locale['5'];
+	        	if ( $locale['5']=='english' ){
+	        		$lang = 'en';
+	        		$country = 'gb';
+	        	}
+
+	        	// On récupére les bulletins d'enneigements de la Sambuy
+	        	$url_lasambuy = "http://clientservice.onthesnow.com/externalservice/resort/3051/combinedreport?token=" . $token . "&language=" . $lang . "&country=" . $country;
+	        	$data_lasambuy = SitraCurlFopenHelper::getCURLData($url_lasambuy);
+
+	        	$lasambuy_object = json_decode($data_lasambuy);
+
+	        	return $lasambuy_object;
+        	}
         }
     }
